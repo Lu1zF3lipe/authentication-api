@@ -7,4 +7,5 @@ statusRoute.get('/status', (req: Request, res: Response, next: NextFunction) =>{
     res.sendStatus(StatusCodes.OK);
 });
 
+
 export default statusRoute;
