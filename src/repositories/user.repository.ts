@@ -90,7 +90,6 @@ class userRepository {
 
             const { rows } = await db.query<User>(query, values);
             const [user] = rows;
-
             return user || null;
 
         } catch (error) {
