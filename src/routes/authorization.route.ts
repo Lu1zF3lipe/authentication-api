@@ -6,7 +6,6 @@ import userRepository from "../repositories/user.repository";
 const authorizationRoute = Router();
 
 authorizationRoute.post('/token', async (req: Request, res: Response, next: NextFunction) =>{
-    try {
         const authorizationHeader = req.headers['authorization'];
 
         if (!authorizationHeader) {
@@ -25,13 +24,10 @@ authorizationRoute.post('/token', async (req: Request, res: Response, next: Next
         if (!username || !password) {
             throw new forbiddenError('Credencias nao preenchindas');
         }
+        
         const user = await userRepository.findByusenameandpassword(username, password);
         console.log(user);
 
-    } catch (error) {
-        next(error);
-    }
-    // 97f00dea-7409-4190-b216-d63c6af8ff62
 });
 
 export default authorizationRoute;

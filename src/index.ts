@@ -1,3 +1,5 @@
+import 'dotenv/config';
+import 'express-async-errors';
 import express from 'express';
 import errorHandler from './middlewares/error-handler.middlewares';
 import authorizationRoute from './routes/authorization.route';
