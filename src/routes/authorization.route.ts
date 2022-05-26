@@ -1,32 +1,25 @@
 import { NextFunction, Request, Response,Router } from "express";
-import { buffer } from "stream/consumers";
+import JWT from 'jsonwebtoken';
+import { StatusCodes } from "http-status-codes";
+import basicAuthenticationMiddleware from "../middlewares/basic-authentication.middleware";
 import forbiddenError from "../models/errors/forbidden.error.model";
-import userRepository from "../repositories/user.repository";
 
 const authorizationRoute = Router();
 
-authorizationRoute.post('/token', async (req: Request, res: Response, next: NextFunction) =>{
-        const authorizationHeader = req.headers['authorization'];
+authorizationRoute.post('/token', basicAuthenticationMiddleware, async (req: Request, res: Response, next: NextFunction) => {
 
-        if (!authorizationHeader) {
-            throw new forbiddenError('credenciaias nao informadas');
-        }
+        const user = req.user;
 
-        const [authenticationType, token] = authorizationHeader.split(' ');
-
-        if (authenticationType !== 'Basic' || !token) {
-            throw new forbiddenError('tipo de autenticaçao invalido');
-        } 
-
-        const tokenContent = Buffer.from(token, 'base64').toString('utf-8');
-        const [username, password] = tokenContent.split(':');
-
-        if (!username || !password) {
-            throw new forbiddenError('Credencias nao preenchindas');
+        if (!user) {
+            throw new forbiddenError('usuario nao imformado');
         }
         
-        const user = await userRepository.findByusenameandpassword(username, password);
-        console.log(user);
+        const jwtPayload = { username: user.username };
+        const jwtOptions = { subject: user?.uuid};
+        const secretKey = 'byakugan';
+
+        const jwt = JWT.sign(jwtPayload, secretKey, jwtOptions)
+        res.status(StatusCodes.OK).json({token: jwt});
 
 });
 
